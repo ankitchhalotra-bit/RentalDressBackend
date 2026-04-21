@@ -1,6 +1,6 @@
 package com.custom_dress.demo.gateway.controller.admin;
 
-import com.custom_dress.demo.gateway.model.AddDressInfoDTO;
+import com.custom_dress.demo.gateway.model.Dress;
 import com.custom_dress.demo.gateway.service.admin.GetAllDressService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +18,8 @@ public class GetAllDress extends MessageController {
         this.getAllDress = getAllDress;
     }
 
-    @GetMapping("/dresses")
-    public List<AddDressInfoDTO> getAllDresses() {
+    @GetMapping("/admin/dresses")
+    public List<Dress> getAllDresses() {
         return getAllDress.getAllDressesData();
     }
 }

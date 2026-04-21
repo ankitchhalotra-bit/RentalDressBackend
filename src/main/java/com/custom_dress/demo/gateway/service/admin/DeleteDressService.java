@@ -1,34 +1,30 @@
 package com.custom_dress.demo.gateway.service.admin;
 
 import com.cloudinary.Cloudinary;
-import com.custom_dress.demo.gateway.model.AddDressInfoDTO;
+import com.custom_dress.demo.gateway.model.Dress;
 import com.custom_dress.demo.gateway.repository.DressRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
 public class DeleteDressService {
-    public final DressRepository addDressRepo;
+    public final DressRepository dressRepository;
     public final Cloudinary cloudinary;
 
-    public DeleteDressService(DressRepository addDressRepo, Cloudinary cloudinary) {
-        this.addDressRepo = addDressRepo;
+    public DeleteDressService(DressRepository dressRepository, Cloudinary cloudinary) {
+        this.dressRepository = dressRepository;
         this.cloudinary = cloudinary;
     }
 
     public void deleteById(String id) throws Exception {
 
         // 1️⃣ Find dress
-        AddDressInfoDTO dress = addDressRepo.findById(id)
+        Dress dress = dressRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dress not found"));
 
-        // 2️⃣ Delete image from Cloudinary
-        if (dress.getPublicId() != null) {
-            cloudinary.uploader().destroy(dress.getPublicId(), Map.of());
-        }
-
-        // 3️⃣ Delete from MongoDB
-        addDressRepo.deleteById(id);
+        // 2️⃣ Soft delete - mark as inactive
+        dress.setActive(false);
+        dress.setUpdatedAt(System.currentTimeMillis());
+        dressRepository.save(dress);
     }
 }
+

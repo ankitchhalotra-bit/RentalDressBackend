@@ -1,6 +1,6 @@
 package com.custom_dress.demo.gateway.controller.admin;
 
-import com.custom_dress.demo.gateway.model.AddDressInfoDTO;
+import com.custom_dress.demo.gateway.model.Dress;
 import com.custom_dress.demo.gateway.service.admin.AddDressService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -26,21 +26,25 @@ public class AddDressController extends MessageController {
     @PostMapping(value = "/dress", consumes = "multipart/form-data")
     public ResponseEntity<?> addDress(
             @RequestParam("name") String name,
-            @RequestParam("type") String type,
-            @RequestParam("price") Double price,
+            @RequestParam("occasion") String occasion,
+            @RequestParam("rentalPricePerDay") Double rentalPricePerDay,
+            @RequestParam("depositAmount") Double depositAmount,
             @RequestParam("description") String description,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("totalStock") Integer totalStock,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
-            AddDressInfoDTO dto = new AddDressInfoDTO();
-            dto.setDressID(UUID.randomUUID().toString());
-            dto.setName(name);
-            dto.setType(type);
-            dto.setPrice(price);
-            dto.setDescription(description);
-            dto.setFavorite(false);
-            dto.setAddCart(false);
+            Dress dress = new Dress();
+            dress.setName(name);
+            dress.setOccasion(occasion);
+            dress.setRentalPricePerDay(rentalPricePerDay);
+            dress.setDepositAmount(depositAmount);
+            dress.setDescription(description);
+            dress.setTotalStock(totalStock);
+            dress.setAvailableStock(totalStock);
+            dress.setImageUrls(new ArrayList<>());
+            dress.setActive(true);
 
-            AddDressInfoDTO saved = addDressService.addDress(dto, file);
+            Dress saved = addDressService.addDress(dress, file);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("message", "Dress added successfully", "data", saved));
