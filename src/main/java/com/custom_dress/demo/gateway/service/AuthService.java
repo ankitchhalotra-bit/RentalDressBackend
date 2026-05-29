@@ -50,4 +50,17 @@ public class AuthService {
 
         return jwtUtil.generateToken(email, user.getRole(), user.getId());
     }
+
+    public String oauth2LoginOrRegister(String email, String name) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setName(name);
+            user.setRole("ROLE_USER");
+            user.setPassword(passwordEncoder.encode("oauth2_dummy_password"));
+            userRepository.save(user);
+        }
+        return jwtUtil.generateToken(email, user.getRole(), user.getId());
+    }
 }
